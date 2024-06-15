@@ -1,0 +1,47 @@
+const express = require('express');
+const nodemailer = require('nodemailer');
+const cors = require('cors');
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+        type: 'OAuth2',
+        user: 'biotech.pharmaease@gmail.com',
+        clientId: "33012093037-d7d3n1vq5ie7utt5t4o34rmabiv102e9.apps.googleusercontent.com",
+        clientSecret: "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",
+        refreshToken: "1//0hhiC_dueXdvVCgYIARAAGBESNwF-L9Irc6n_KkBjn5JzlEJBYA4mqs7vnq5t5DcrasI0BrnRSNudiXtl8-D1zYKGcNq31cVZnoc",
+    }
+});
+
+app.post('/send-email', (req, res) => {
+    const { to, subject, text } = req.body;
+
+    transporter.sendMail({
+        from: 'biotech.pharmaease@gmail.com',  
+        to, 
+        subject,
+        text,
+    }, (error, info) => {
+        if (error) {
+            return res.status(500).json({ message: 'Erro ao enviar e-mail', error: error.toString() });
+        }
+        res.status(200).json({ message: 'E-mail enviado com sucesso', info: info });
+    });
+});
+
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => {
+    console.log(`Servidor rodando na porta ${PORT}`);
+});
+
+
+// Pegar refreshtoken:
+// curl -H "Content-Type: application/x-www-form-urlencoded" -d "code=pegue_o_codigo&client_secret=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&redirect_uri=http://localhost:4000&grant_type=authorization_code" https://oauth2.googleapis.com/token
+
+
+// Pegar codigo:
+// https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=33012093037-d7d3n1vq5ie7utt5t4o34rmabiv102e9.apps.googleusercontent.com&redirect_uri=http://localhost:4000&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&access_type=offline&prompt=consent
