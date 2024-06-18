@@ -1,3 +1,5 @@
+//api manda email de você para você mesmo com as informaçoes contidas em to, subject e text
+
 const express = require('express'); //framework pra criar um servidor http
 const nodemailer = require('nodemailer'); //modulo pra enviar os emails
 const cors = require('cors');//modulo para permitor ou restringir solicitação web
@@ -9,8 +11,8 @@ app.use(express.json());
 const transporter = nodemailer.createTransport({
     service: "gmail",//serviço de email
     auth: {
-        user: 'biotech.pharmaease@gmail.com',//user que envia a msg
-        pass: 'yslpmnfecfoubrtu',
+        user: 'seu_email',//user que envia a msg
+        pass: 'passe', //para gerar o passe, ative a autenticação multifator e selecione o gmail e gerará um passe (no caso do gmail)
     }
 });
 
@@ -18,7 +20,7 @@ app.post('/send-email', (req, res) => {
     const { to, subject, text } = req.body; //recebe as informaçoes da const response no contato.tsx
 
     transporter.sendMail({ //envia o email
-        from: 'biotech.pharmaease@gmail.com',  
+        from: 'seu_email',  
         to, 
         subject,
         text,
